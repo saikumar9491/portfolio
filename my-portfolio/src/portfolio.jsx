@@ -62,69 +62,520 @@ function useCounter(end,active){const[val,setVal]=useState(0);useEffect(()=>{if(
 
 function SLabel({label,light}){return(<div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"14px"}}><div style={{width:"8px",height:"8px",borderRadius:"50%",background:C.orange}}/><span style={{fontSize:"0.68rem",fontWeight:800,letterSpacing:"0.22em",textTransform:"uppercase",color:C.orange}}>{label}</span></div>);}
 
-// ── NAV ──────────────────────────────────────────────────────────────────────
-function Nav({active}){
-  const[scrolled,setScrolled]=useState(false);
-  useEffect(()=>{const h=()=>setScrolled(window.scrollY>30);window.addEventListener("scroll",h);return()=>window.removeEventListener("scroll",h);},[]);
-  const go=id=>document.getElementById(id)?.scrollIntoView({behavior:"smooth"});
-  const links=["home","about","skills","work","experience","achievements","education","contact"];
-  return(
-    <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:200,background:scrolled?"rgba(12,31,16,0.97)":"transparent",backdropFilter:scrolled?"blur(14px)":"none",borderBottom:scrolled?"1px solid rgba(232,76,30,0.15)":"none",transition:"all 0.3s",padding:"0 4%"}}>
-      <div style={{maxWidth:"1280px",margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",height:"66px"}}>
-        <div style={{display:"flex",alignItems:"center",gap:"10px",cursor:"pointer"}} onClick={()=>go("home")}>
-          <div style={{width:"36px",height:"36px",borderRadius:"50%",background:C.orange,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:"0.82rem",color:"#fff"}}>BS</div>
-          <div><div style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"1rem",color:"#fff"}}>Saikumar.</div><div style={{fontSize:"0.56rem",color:C.lgray,letterSpacing:"0.2em",textTransform:"uppercase"}}>Developer</div></div>
+function Nav({ active, isMobile }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const h = () => setScrolled(window.scrollY > 30);
+    window.addEventListener("scroll", h);
+    return () => window.removeEventListener("scroll", h);
+  }, []);
+
+  const go = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMenuOpen(false);
+  };
+
+  const links = ["home", "about", "skills", "work", "experience", "achievements", "education", "contact"];
+
+  return (
+    <nav
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 200,
+        background: scrolled || isMobile ? "rgba(12,31,16,0.97)" : "transparent",
+        backdropFilter: scrolled || isMobile ? "blur(14px)" : "none",
+        borderBottom: scrolled || isMobile ? "1px solid rgba(232,76,30,0.15)" : "none",
+        transition: "all 0.3s",
+        padding: isMobile ? "0 16px" : "0 4%",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: isMobile ? "62px" : "66px",
+        }}
+      >
+        <div
+          style={{ display: "flex", alignItems: "center", gap: isMobile ? "8px" : "10px", cursor: "pointer" }}
+          onClick={() => go("home")}
+        >
+          <div
+            style={{
+              width: isMobile ? "32px" : "36px",
+              height: isMobile ? "32px" : "36px",
+              borderRadius: "50%",
+              background: C.orange,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 900,
+              fontSize: isMobile ? "0.74rem" : "0.82rem",
+              color: "#fff",
+            }}
+          >
+            BS
+          </div>
+
+          <div>
+            <div
+              style={{
+                fontFamily: "Georgia,serif",
+                fontWeight: 700,
+                fontSize: isMobile ? "0.9rem" : "1rem",
+                color: "#fff",
+              }}
+            >
+              Saikumar.
+            </div>
+            <div
+              style={{
+                fontSize: isMobile ? "0.5rem" : "0.56rem",
+                color: C.lgray,
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+              }}
+            >
+              Developer
+            </div>
+          </div>
         </div>
-        <div style={{display:"flex",gap:"0"}}>
-          {links.map(id=>(
-            <button key={id} onClick={()=>go(id)} style={{background:"none",border:"none",cursor:"pointer",color:active===id?C.orange:C.lgray,fontWeight:700,fontSize:"0.68rem",letterSpacing:"0.08em",textTransform:"uppercase",padding:"6px 10px",transition:"color 0.2s"}}
-              onMouseEnter={e=>e.currentTarget.style.color="#fff"} onMouseLeave={e=>e.currentTarget.style.color=active===id?C.orange:C.lgray}>{id}</button>
-          ))}
-        </div>
-        <button onClick={()=>go("contact")} style={{background:C.orange,border:"none",borderRadius:"100px",color:"#fff",fontWeight:800,fontSize:"0.72rem",letterSpacing:"0.1em",textTransform:"uppercase",padding:"9px 20px",cursor:"pointer",transition:"all 0.2s"}}
-          onMouseEnter={e=>{e.currentTarget.style.background=C.ohov;e.currentTarget.style.transform="scale(1.04)";}} onMouseLeave={e=>{e.currentTarget.style.background=C.orange;e.currentTarget.style.transform="scale(1)";}}>LET'S TALK</button>
+
+        {isMobile ? (
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            style={{background: "transparent",border: `1px solid rgba(240,235,224,0.16)`,color: "#fff",width: "40px",height: "40px",borderRadius: "10px",cursor: "pointer", fontSize: "1.1rem",display: "flex", alignItems: "center",justifyContent: "center", }}
+          >
+            {menuOpen ? "✕" : "☰"}
+          </button>
+        ) : (
+          <>
+            <div style={{ display: "flex", gap: "0" }}>
+              {links.map((id) => (
+                <button
+                  key={id}
+                  onClick={() => go(id)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: active === id ? C.orange : C.lgray,
+                    fontWeight: 700,
+                    fontSize: "0.68rem",
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    padding: "6px 10px",
+                    transition: "color 0.2s",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = active === id ? C.orange : C.lgray)}
+                >
+                  {id}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => go("contact")}
+              style={{
+                background: C.orange,
+                border: "none",
+                borderRadius: "100px",
+                color: "#fff",
+                fontWeight: 800,
+                fontSize: "0.72rem",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                padding: "9px 20px",
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = C.ohov;
+                e.currentTarget.style.transform = "scale(1.04)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = C.orange;
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+            >
+              LET'S TALK
+            </button>
+          </>
+        )}
       </div>
+
+      {isMobile && menuOpen && (
+        <div
+          style={{
+            padding: "10px 0 14px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "6px",
+          }}
+        >
+          {links.map((id) => (
+            <button
+              key={id}
+              onClick={() => go(id)}
+              style={{
+                background: active === id ? "rgba(232,76,30,0.14)" : "transparent",
+                border: active === id ? `1px solid rgba(232,76,30,0.35)` : "1px solid rgba(240,235,224,0.08)",
+                color: active === id ? C.orange : C.cream,
+                fontWeight: 700,
+                fontSize: "0.72rem",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                padding: "11px 12px",
+                borderRadius: "10px",
+                textAlign: "left",
+                cursor: "pointer",
+              }}
+            >
+              {id}
+            </button>
+          ))}
+
+          <button
+            onClick={() => go("contact")}
+            style={{
+              marginTop: "6px",
+              background: C.orange,
+              border: "none",
+              borderRadius: "10px",
+              color: "#fff",
+              fontWeight: 800,
+              fontSize: "0.74rem",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              padding: "12px 14px",
+              cursor: "pointer",
+            }}
+          >
+            LET'S TALK
+          </button>
+        </div>
+      )}
     </nav>
   );
 }
 
 // ── HERO ─────────────────────────────────────────────────────────────────────
-function StatNum({end,suffix,label,border,active}){
-  const count=useCounter(end,active);
-  const display=Number.isInteger(end)?count:end;
-  return(<div style={{flex:1,paddingRight:border?"28px":"0",borderRight:border?`1px solid ${C.bdr}`:"none",marginRight:border?"28px":"0"}}><div style={{fontFamily:"Georgia,serif",fontSize:"2rem",fontWeight:900,color:C.orange,lineHeight:1}}>{display}{suffix}</div><div style={{fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.14em",color:C.gray,textTransform:"uppercase",marginTop:"4px"}}>{label}</div></div>);
+function StatNum({ end, suffix, label, border, active, isMobile }) {
+  const count = useCounter(end, active);
+  const display = Number.isInteger(end) ? count : end;
+
+  return (
+    <div
+      style={{
+        flex: 1,
+        paddingRight: border && !isMobile ? "28px" : "0",
+        borderRight: border && !isMobile ? `1px solid ${C.bdr}` : "none",
+        marginRight: border && !isMobile ? "28px" : "0",
+        minWidth: isMobile ? "100%" : "auto",
+        marginBottom: isMobile ? "16px" : "0",
+      }}
+    >
+      <div
+        style={{
+          fontFamily: "Georgia,serif",
+          fontSize: isMobile ? "1.6rem" : "2rem",
+          fontWeight: 900,
+          color: C.orange,
+          lineHeight: 1,
+        }}
+      >
+        {display}
+        {suffix}
+      </div>
+      <div
+        style={{
+          fontSize: isMobile ? "0.56rem" : "0.6rem",
+          fontWeight: 700,
+          letterSpacing: "0.14em",
+          color: C.gray,
+          textTransform: "uppercase",
+          marginTop: "4px",
+        }}
+      >
+        {label}
+      </div>
+    </div>
+  );
 }
 
-function Hero(){
-  const[ref,vis]=useInView(0.1);
-  const roles=["Full-Stack Developer","MERN Stack Engineer","React Specialist","Problem Solver"];
-  const[ri,setRi]=useState(0);const[fade,setFade]=useState(false);
-  useEffect(()=>{const t=setInterval(()=>{setFade(true);setTimeout(()=>{setRi(i=>(i+1)%roles.length);setFade(false);},300);},2800);return()=>clearInterval(t);},[]);
-  return(
-    <section id="home" style={{minHeight:"100vh",background:C.white,display:"flex",alignItems:"stretch",padding:"0",overflow:"hidden"}}>
-      <div ref={ref} style={{width:"100%",display:"flex",alignItems:"stretch"}}>
-        <div style={{flex:"0 0 50%",maxWidth:"50%",display:"flex",flexDirection:"column",justifyContent:"center",padding:"100px 4% 60px 6%"}}>
-          <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"20px"}}>
-            <div style={{width:"8px",height:"8px",borderRadius:"50%",background:C.orange}}/>
-            <span style={{fontSize:"0.7rem",fontWeight:800,letterSpacing:"0.22em",color:C.orange,textTransform:"uppercase"}}>Full-Stack Developer</span>
+function Hero({ isMobile }) {
+  const [ref, vis] = useInView(0.1);
+  const roles = ["Full-Stack Developer", "MERN Stack Engineer", "React Specialist", "Problem Solver"];
+  const [ri, setRi] = useState(0);
+  const [fade, setFade] = useState(false);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setFade(true);
+      setTimeout(() => {
+        setRi((i) => (i + 1) % roles.length);
+        setFade(false);
+      }, 300);
+    }, 2800);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <section
+      id="home"
+      style={{
+        minHeight: isMobile ? "auto" : "100vh",
+        background: C.white,
+        display: "flex",
+        alignItems: "stretch",
+        padding: "0",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        ref={ref}
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "stretch",
+          flexDirection: isMobile ? "column-reverse" : "row",
+        }}
+      >
+        <div
+          style={{
+            flex: isMobile ? "1 1 100%" : "0 0 50%",
+            maxWidth: isMobile ? "100%" : "50%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: isMobile ? "40px 20px 50px" : "100px 4% 60px 6%",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
+            <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: C.orange }} />
+            <span
+              style={{
+                fontSize: isMobile ? "0.62rem" : "0.7rem",
+                fontWeight: 800,
+                letterSpacing: "0.22em",
+                color: C.orange,
+                textTransform: "uppercase",
+              }}
+            >
+              Full-Stack Developer
+            </span>
           </div>
-          <h1 style={{fontFamily:"Georgia,'Times New Roman',serif",fontSize:"clamp(2.4rem,4.5vw,4.6rem)",fontWeight:900,color:C.dark,lineHeight:1.05,margin:"0 0 4px",letterSpacing:"-0.02em",opacity:vis?1:0,transform:vis?"none":"translateY(30px)",transition:"all 0.8s"}}>Building Solutions,<br/>One Line of</h1>
-          <h1 style={{fontFamily:"Georgia,'Times New Roman',serif",fontSize:"clamp(2.4rem,4.5vw,4.6rem)",fontWeight:900,color:C.orange,fontStyle:"italic",lineHeight:1.05,margin:"0 0 24px",letterSpacing:"-0.02em",opacity:vis?1:0,transform:vis?"none":"translateY(30px)",transition:"all 0.8s 0.1s"}}>Code at a Time.</h1>
-          <p style={{fontSize:"0.9rem",color:C.gray,lineHeight:1.8,maxWidth:"430px",marginBottom:"32px",opacity:vis?1:0,transition:"all 0.8s 0.2s"}}>I'm a Computer Science student at LPU with a passion for building things that actually work. I love full-stack development — from crafting clean user interfaces to building reliable server-side logic.</p>
-          <div style={{display:"flex",gap:"12px",flexWrap:"wrap",marginBottom:"36px",opacity:vis?1:0,transition:"all 0.8s 0.3s"}}>
-            <button onClick={()=>document.getElementById("work")?.scrollIntoView({behavior:"smooth"})} style={{background:C.orange,border:"none",borderRadius:"100px",color:"#fff",fontWeight:700,fontSize:"0.86rem",padding:"13px 28px",cursor:"pointer",transition:"all 0.2s"}} onMouseEnter={e=>e.currentTarget.style.background=C.ohov} onMouseLeave={e=>e.currentTarget.style.background=C.orange}>View My Work</button>
-            <button onClick={()=>document.getElementById("contact")?.scrollIntoView({behavior:"smooth"})} style={{background:"transparent",border:`1.5px solid ${C.dark}`,borderRadius:"100px",color:C.dark,fontWeight:700,fontSize:"0.86rem",padding:"13px 28px",cursor:"pointer",transition:"all 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.background=C.dark;e.currentTarget.style.color="#fff";}} onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color=C.dark;}}>Get In Touch</button>
-            <a href="https://drive.google.com/file/d/1OgYrJTvkxEyAR-fTJTl4SmYG6YU-yQWT/view?usp=sharing" target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",alignItems:"center",gap:"7px",background:"transparent",border:`1.5px solid ${C.dark}`,borderRadius:"100px",color:C.dark,fontWeight:700,fontSize:"0.86rem",padding:"13px 28px",cursor:"pointer",textDecoration:"none",transition:"all 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.background=C.orange;e.currentTarget.style.borderColor=C.orange;e.currentTarget.style.color="#fff";}} onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.borderColor=C.dark;e.currentTarget.style.color=C.dark;}}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+
+          <h1
+            style={{
+              fontFamily: "Georgia,'Times New Roman',serif",
+              fontSize: isMobile ? "2.1rem" : "clamp(2.4rem,4.5vw,4.6rem)",
+              fontWeight: 900,
+              color: C.dark,
+              lineHeight: 1.08,
+              margin: "0 0 4px",
+              letterSpacing: "-0.02em",
+              opacity: vis ? 1 : 0,
+              transform: vis ? "none" : "translateY(30px)",
+              transition: "all 0.8s",
+            }}
+          >
+            Building Solutions,<br />
+            One Line of
+          </h1>
+
+          <h1
+            style={{
+              fontFamily: "Georgia,'Times New Roman',serif",
+              fontSize: isMobile ? "2.1rem" : "clamp(2.4rem,4.5vw,4.6rem)",
+              fontWeight: 900,
+              color: C.orange,
+              fontStyle: "italic",
+              lineHeight: 1.08,
+              margin: "0 0 24px",
+              letterSpacing: "-0.02em",
+              opacity: vis ? 1 : 0,
+              transform: vis ? "none" : "translateY(30px)",
+              transition: "all 0.8s 0.1s",
+            }}
+          >
+            Code at a Time.
+          </h1>
+
+          <p
+            style={{
+              fontSize: isMobile ? "0.84rem" : "0.9rem",
+              color: C.gray,
+              lineHeight: 1.8,
+              maxWidth: isMobile ? "100%" : "430px",
+              marginBottom: "32px",
+              opacity: vis ? 1 : 0,
+              transition: "all 0.8s 0.2s",
+            }}
+          >
+            I'm a Computer Science student at LPU with a passion for building things that actually work. I love full-stack development — from crafting clean user interfaces to building reliable server-side logic.
+          </p>
+
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              flexWrap: "wrap",
+              marginBottom: "36px",
+              opacity: vis ? 1 : 0,
+              transition: "all 0.8s 0.3s",
+            }}
+          >
+            <button
+              onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
+              style={{
+                background: C.orange,
+                border: "none",
+                borderRadius: "100px",
+                color: "#fff",
+                fontWeight: 700,
+                fontSize: isMobile ? "0.78rem" : "0.86rem",
+                padding: isMobile ? "12px 20px" : "13px 28px",
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = C.ohov)}
+              onMouseLeave={(e) => (e.currentTarget.style.background = C.orange)}
+            >
+              View My Work
+            </button>
+
+            <button
+              onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+              style={{
+                background: "transparent",
+                border: `1.5px solid ${C.dark}`,
+                borderRadius: "100px",
+                color: C.dark,
+                fontWeight: 700,
+                fontSize: isMobile ? "0.78rem" : "0.86rem",
+                padding: isMobile ? "12px 20px" : "13px 28px",
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = C.dark;
+                e.currentTarget.style.color = "#fff";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = C.dark;
+              }}
+            >
+              Get In Touch
+            </button>
+
+            <a
+              href="https://drive.google.com/file/d/1OgYrJTvkxEyAR-fTJTl4SmYG6YU-yQWT/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "7px",
+                background: "transparent",
+                border: `1.5px solid ${C.dark}`,
+                borderRadius: "100px",
+                color: C.dark,
+                fontWeight: 700,
+                fontSize: isMobile ? "0.78rem" : "0.86rem",
+                padding: isMobile ? "12px 20px" : "13px 28px",
+                cursor: "pointer",
+                textDecoration: "none",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = C.orange;
+                e.currentTarget.style.borderColor = C.orange;
+                e.currentTarget.style.color = "#fff";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.borderColor = C.dark;
+                e.currentTarget.style.color = C.dark;
+              }}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
               Download CV
             </a>
           </div>
-          <div style={{display:"flex",gap:"0",borderTop:`1px solid ${C.bdr}`,paddingTop:"26px",opacity:vis?1:0,transition:"all 0.8s 0.4s"}}>
-            {[{v:6.5,s:"",l:"CGPA AT LPU"},{v:50,s:"+",l:"LEETCODE DAYS"},{v:2,s:"+",l:"LIVE PROJECTS"}].map(({v,s,l},i)=>(<StatNum key={l} end={v} suffix={s} label={l} border={i<2} active={vis}/>))}
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              gap: isMobile ? "0" : "0",
+              borderTop: `1px solid ${C.bdr}`,
+              paddingTop: "26px",
+              opacity: vis ? 1 : 0,
+              transition: "all 0.8s 0.4s",
+            }}
+          >
+            {[
+              { v: 6.5, s: "", l: "CGPA AT LPU" },
+              { v: 50, s: "+", l: "LEETCODE DAYS" },
+              { v: 2, s: "+", l: "LIVE PROJECTS" },
+            ].map(({ v, s, l }, i) => (
+              <StatNum
+                key={l}
+                end={v}
+                suffix={s}
+                label={l}
+                border={i < 2}
+                active={vis}
+                isMobile={isMobile}
+              />
+            ))}
           </div>
         </div>
-        <div style={{flex:"0 0 50%",maxWidth:"50%",opacity:vis?1:0,transition:"opacity 0.9s 0.2s"}}>
-          <img src={PHOTO} alt="Bali Saikumar" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"top center",display:"block",minHeight:"100vh"}}/>
+
+        <div
+          style={{
+            flex: isMobile ? "1 1 100%" : "0 0 50%",
+            maxWidth: isMobile ? "100%" : "50%",
+            opacity: vis ? 1 : 0,
+            transition: "opacity 0.9s 0.2s",
+          }}
+        >
+          <img
+            src={PHOTO}
+            alt="Bali Saikumar"
+            style={{
+              width: "100%",
+              height: isMobile ? "420px" : "100%",
+              objectFit: "cover",
+              objectPosition: "top center",
+              display: "block",
+              minHeight: isMobile ? "420px" : "100vh",
+            }}
+          />
         </div>
       </div>
     </section>
@@ -132,44 +583,331 @@ function Hero(){
 }
 
 // ── MARQUEE ──────────────────────────────────────────────────────────────────
-function Marquee(){
-  const items=["MERN STACK","REACT.JS","NODE.JS","FULL-STACK DEV","MONGODB","TAILWIND CSS","PROBLEM SOLVING","EXPRESS.JS"];
-  const all=[...items,...items];
-  return(<div style={{overflow:"hidden",background:C.orange,padding:"13px 0"}}><div style={{display:"flex",animation:"marquee 20s linear infinite",whiteSpace:"nowrap"}}>{all.map((item,i)=>(<span key={i} style={{display:"inline-flex",alignItems:"center",gap:"14px",paddingRight:"36px",fontSize:"0.8rem",fontWeight:800,letterSpacing:"0.18em",color:"#fff"}}>{item}<span style={{opacity:0.5}}>★</span></span>))}</div></div>);
+function Marquee({ isMobile }) {
+  const items = [
+    "MERN STACK",
+    "REACT.JS",
+    "NODE.JS",
+    "FULL-STACK DEV",
+    "MONGODB",
+    "TAILWIND CSS",
+    "PROBLEM SOLVING",
+    "EXPRESS.JS",
+  ];
+
+  const all = [...items, ...items];
+
+  return (
+    <div
+      style={{
+        overflow: "hidden",
+        background: C.orange,
+        padding: isMobile ? "10px 0" : "13px 0",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          animation: `marquee ${isMobile ? "24s" : "20s"} linear infinite`,
+          whiteSpace: "nowrap",
+        }}
+      >
+        {all.map((item, i) => (
+          <span
+            key={i}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: isMobile ? "10px" : "14px",
+              paddingRight: isMobile ? "24px" : "36px",
+              fontSize: isMobile ? "0.68rem" : "0.8rem",
+              fontWeight: 800,
+              letterSpacing: isMobile ? "0.12em" : "0.18em",
+              color: "#fff",
+            }}
+          >
+            {item}
+            <span style={{ opacity: 0.5 }}>★</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 // ── ABOUT ────────────────────────────────────────────────────────────────────
-function About(){
-  const[ref,vis]=useInView();
-  return(
-    <section id="about" style={{background:C.bg,padding:"100px 5%"}}>
-      <div style={{maxWidth:"1240px",margin:"0 auto"}}>
-        <SLabel label="ABOUT ME" light/>
-        <div ref={ref} style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"80px",alignItems:"center",flexWrap:"wrap"}}>
-          {/* Left: photo */}
-          <div style={{opacity:vis?1:0,transform:vis?"none":"translateX(-30px)",transition:"all 0.9s"}}>
-            <div style={{borderRadius:"20px",overflow:"hidden",border:"2px solid rgba(232,76,30,0.2)",position:"relative"}}>
-              <img src={PHOTO} alt="Bali Saikumar" style={{width:"100%",height:"480px",objectFit:"cover",objectPosition:"center%",display:"block"}}/>
-              <div style={{position:"absolute",bottom:"20px",left:"20px",background:"rgba(12,31,16,0.9)",backdropFilter:"blur(8px)",borderRadius:"12px",padding:"14px 18px",border:"1px solid rgba(232,76,30,0.3)"}}>
-                <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"4px"}}><div style={{width:"8px",height:"8px",borderRadius:"50%",background:"#22c55e"}}/><span style={{fontSize:"0.72rem",fontWeight:700,color:"#22c55e"}}>Open to Work</span></div>
-                <div style={{fontSize:"0.82rem",fontWeight:700,color:C.cream}}>Open to opportunities</div>
+function About({ isMobile }) {
+  const [ref, vis] = useInView();
+
+  return (
+    <section
+      id="about"
+      style={{
+        background: C.bg,
+        padding: isMobile ? "70px 20px" : "100px 5%",
+      }}
+    >
+      <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
+        <SLabel label="ABOUT ME" light />
+
+        <div
+          ref={ref}
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+            gap: isMobile ? "40px" : "80px",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              opacity: vis ? 1 : 0,
+              transform: vis ? "none" : "translateX(-30px)",
+              transition: "all 0.9s",
+            }}
+          >
+            <div
+              style={{
+                borderRadius: "20px",
+                overflow: "hidden",
+                border: "2px solid rgba(232,76,30,0.2)",
+                position: "relative",
+              }}
+            >
+              <img
+                src={PHOTO}
+                alt="Bali Saikumar"
+                style={{
+                  width: "100%",
+                  height: isMobile ? "340px" : "480px",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  display: "block",
+                }}
+              />
+
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: isMobile ? "14px" : "20px",
+                  left: isMobile ? "14px" : "20px",
+                  background: "rgba(12,31,16,0.9)",
+                  backdropFilter: "blur(8px)",
+                  borderRadius: "12px",
+                  padding: isMobile ? "10px 14px" : "14px 18px",
+                  border: "1px solid rgba(232,76,30,0.3)",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#22c55e" }} />
+                  <span style={{ fontSize: isMobile ? "0.66rem" : "0.72rem", fontWeight: 700, color: "#22c55e" }}>
+                    Open to Work
+                  </span>
+                </div>
+                <div style={{ fontSize: isMobile ? "0.76rem" : "0.82rem", fontWeight: 700, color: C.cream }}>
+                  Open to opportunities
+                </div>
               </div>
             </div>
-            {/* Info grid below photo */}
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",marginTop:"12px"}}>
-              {[{l:"PHONE",v:"+91-7997696717"},{l:"UNIVERSITY",v:"LPU, Punjab"},{l:"DEGREE",v:"B.Tech CSE"},{l:"CGPA",v:"6.5 / 10",hi:true}].map(({l,v,hi})=>(<div key={l} style={{background:"rgba(240,235,224,0.07)",borderRadius:"10px",padding:"12px 16px",border:"1px solid rgba(240,235,224,0.12)"}}><div style={{fontSize:"0.6rem",fontWeight:800,letterSpacing:"0.14em",color:C.lgray,marginBottom:"3px"}}>{l}</div><div style={{fontSize:"0.84rem",fontWeight:700,color:hi?C.orange:C.cream}}>{v}</div></div>))}
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+                gap: "10px",
+                marginTop: "12px",
+              }}
+            >
+              {[
+                { l: "PHONE", v: "+91-7997696717" },
+                { l: "UNIVERSITY", v: "LPU, Punjab" },
+                { l: "DEGREE", v: "B.Tech CSE" },
+                { l: "CGPA", v: "6.5 / 10", hi: true },
+              ].map(({ l, v, hi }) => (
+                <div
+                  key={l}
+                  style={{
+                    background: "rgba(240,235,224,0.07)",
+                    borderRadius: "10px",
+                    padding: isMobile ? "11px 14px" : "12px 16px",
+                    border: "1px solid rgba(240,235,224,0.12)",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: isMobile ? "0.56rem" : "0.6rem",
+                      fontWeight: 800,
+                      letterSpacing: "0.14em",
+                      color: C.lgray,
+                      marginBottom: "3px",
+                    }}
+                  >
+                    {l}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: isMobile ? "0.78rem" : "0.84rem",
+                      fontWeight: 700,
+                      color: hi ? C.orange : C.cream,
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {v}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-          {/* Right: text */}
-          <div style={{opacity:vis?1:0,transform:vis?"none":"translateX(30px)",transition:"all 0.9s 0.15s"}}>
-            <h2 style={{fontFamily:"Georgia,serif",fontSize:"clamp(2rem,3.5vw,3.2rem)",fontWeight:700,color:C.white,lineHeight:1.1,margin:"0 0 24px"}}>I Build Things<br/><span style={{color:C.orange,fontStyle:"italic"}}>That Work.</span></h2>
-            <p style={{fontSize:"0.92rem",color:"#a0997e",lineHeight:1.85,marginBottom:"18px"}}>Hi, I'm Saikumar — a third-year Computer Science student at LPU who genuinely enjoys building web applications. I like working on both the frontend and backend, and I get a kick out of seeing something I built actually being used.</p>
-            <p style={{fontSize:"0.92rem",color:"#a0997e",lineHeight:1.85,marginBottom:"18px"}}>Right now, I'm interning at <span style={{color:C.orange,fontWeight:700}}>Infosys Springboard</span>, where I'm helping build TaxPal — a platform that makes tax management easier for government users. It's been a great experience working on something real and meaningful.</p>
-            <p style={{fontSize:"0.92rem",color:"#a0997e",lineHeight:1.85,marginBottom:"32px"}}>Outside of work, I keep myself sharp by solving problems on LeetCode — I'm currently on a <span style={{color:C.orange,fontWeight:700}}>50+ day streak</span> and counting. I believe consistent practice is the best way to grow as a developer.</p>
-            {/* Info rows */}
-            {[{l:"NAME",v:"Bali Saikumar"},{l:"LOCATION",v:"Phagwara, Punjab"},{l:"EMAIL",v:"balisaikumar9491@gmail.com"},{l:"STATUS",v:"Open to Work ✓",hi:true}].map(({l,v,hi})=>(<div key={l} style={{display:"flex",gap:"16px",marginBottom:"12px",alignItems:"baseline"}}><span style={{fontSize:"0.62rem",fontWeight:800,letterSpacing:"0.16em",color:C.lgray,minWidth:"70px",textTransform:"uppercase"}}>{l}</span><span style={{fontSize:"0.86rem",color:hi?C.orange:C.cream,fontWeight:hi?700:400}}>{hi&&<span style={{display:"inline-block",width:"7px",height:"7px",borderRadius:"50%",background:"#22c55e",marginRight:"6px",verticalAlign:"middle"}}/>}{v}</span></div>))}
-            <div style={{display:"flex",gap:"10px",marginTop:"24px"}}>
-              {[{href:DATA.contact.github,icon:"🐙",l:"GitHub"},{href:DATA.contact.linkedin,icon:"💼",l:"LinkedIn"},{href:`mailto:${DATA.contact.email}`,icon:"✉️",l:"Email"}].map(({href,icon,l})=>(<a key={l} href={href} target="_blank" rel="noopener noreferrer" style={{display:"flex",alignItems:"center",gap:"6px",padding:"9px 16px",background:"rgba(240,235,224,0.06)",border:"1px solid rgba(240,235,224,0.12)",borderRadius:"8px",fontSize:"0.76rem",fontWeight:700,color:C.cream,textDecoration:"none",transition:"all 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.background="rgba(232,76,30,0.15)";e.currentTarget.style.borderColor=C.orange;e.currentTarget.style.color=C.orange;}} onMouseLeave={e=>{e.currentTarget.style.background="rgba(240,235,224,0.06)";e.currentTarget.style.borderColor="rgba(240,235,224,0.12)";e.currentTarget.style.color=C.cream;}}>{icon} {l}</a>))}
+
+          <div
+            style={{
+              opacity: vis ? 1 : 0,
+              transform: vis ? "none" : "translateX(30px)",
+              transition: "all 0.9s 0.15s",
+            }}
+          >
+            <h2
+              style={{
+                fontFamily: "Georgia,serif",
+                fontSize: isMobile ? "2rem" : "clamp(2rem,3.5vw,3.2rem)",
+                fontWeight: 700,
+                color: C.white,
+                lineHeight: 1.1,
+                margin: "0 0 24px",
+              }}
+            >
+              I Build Things
+              <br />
+              <span style={{ color: C.orange, fontStyle: "italic" }}>That Work.</span>
+            </h2>
+
+            <p
+              style={{
+                fontSize: isMobile ? "0.84rem" : "0.92rem",
+                color: "#a0997e",
+                lineHeight: 1.85,
+                marginBottom: "18px",
+              }}
+            >
+              Hi, I'm Saikumar — a third-year Computer Science student at LPU who genuinely enjoys building web applications. I like working on both the frontend and backend, and I get a kick out of seeing something I built actually being used.
+            </p>
+
+            <p
+              style={{
+                fontSize: isMobile ? "0.84rem" : "0.92rem",
+                color: "#a0997e",
+                lineHeight: 1.85,
+                marginBottom: "18px",
+              }}
+            >
+              Right now, I'm interning at <span style={{ color: C.orange, fontWeight: 700 }}>Infosys Springboard</span>, where I'm helping build TaxPal — a platform that makes tax management easier for government users. It's been a great experience working on something real and meaningful.
+            </p>
+
+            <p
+              style={{
+                fontSize: isMobile ? "0.84rem" : "0.92rem",
+                color: "#a0997e",
+                lineHeight: 1.85,
+                marginBottom: "32px",
+              }}
+            >
+              Outside of work, I keep myself sharp by solving problems on LeetCode — I'm currently on a <span style={{ color: C.orange, fontWeight: 700 }}>50+ day streak</span> and counting. I believe consistent practice is the best way to grow as a developer.
+            </p>
+
+            {[
+              { l: "NAME", v: "Bali Saikumar" },
+              { l: "LOCATION", v: "Phagwara, Punjab" },
+              { l: "EMAIL", v: "balisaikumar9491@gmail.com" },
+              { l: "STATUS", v: "Open to Work ✓", hi: true },
+            ].map(({ l, v, hi }) => (
+              <div
+                key={l}
+                style={{
+                  display: "flex",
+                  gap: isMobile ? "10px" : "16px",
+                  marginBottom: "12px",
+                  alignItems: "baseline",
+                  flexDirection: isMobile ? "column" : "row",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: isMobile ? "0.58rem" : "0.62rem",
+                    fontWeight: 800,
+                    letterSpacing: "0.16em",
+                    color: C.lgray,
+                    minWidth: isMobile ? "auto" : "70px",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {l}
+                </span>
+
+                <span
+                  style={{
+                    fontSize: isMobile ? "0.8rem" : "0.86rem",
+                    color: hi ? C.orange : C.cream,
+                    fontWeight: hi ? 700 : 400,
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {hi && (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        width: "7px",
+                        height: "7px",
+                        borderRadius: "50%",
+                        background: "#22c55e",
+                        marginRight: "6px",
+                        verticalAlign: "middle",
+                      }}
+                    />
+                  )}
+                  {v}
+                </span>
+              </div>
+            ))}
+
+            <div style={{ display: "flex", gap: "10px", marginTop: "24px", flexWrap: "wrap" }}>
+              {[
+                { href: DATA.contact.github, icon: "🐙", l: "GitHub" },
+                { href: DATA.contact.linkedin, icon: "💼", l: "LinkedIn" },
+                { href: `mailto:${DATA.contact.email}`, icon: "✉️", l: "Email" },
+              ].map(({ href, icon, l }) => (
+                <a
+                  key={l}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: isMobile ? "8px 14px" : "9px 16px",
+                    background: "rgba(240,235,224,0.06)",
+                    border: "1px solid rgba(240,235,224,0.12)",
+                    borderRadius: "8px",
+                    fontSize: isMobile ? "0.72rem" : "0.76rem",
+                    fontWeight: 700,
+                    color: C.cream,
+                    textDecoration: "none",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(232,76,30,0.15)";
+                    e.currentTarget.style.borderColor = C.orange;
+                    e.currentTarget.style.color = C.orange;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "rgba(240,235,224,0.06)";
+                    e.currentTarget.style.borderColor = "rgba(240,235,224,0.12)";
+                    e.currentTarget.style.color = C.cream;
+                  }}
+                >
+                  {icon} {l}
+                </a>
+              ))}
             </div>
           </div>
         </div>
@@ -179,170 +917,807 @@ function About(){
 }
 
 // ── SKILLS ───────────────────────────────────────────────────────────────────
-function SkillCard({skill,delay}){
-  const[ref,vis]=useInView();const[hov,setHov]=useState(false);
-  return(<div ref={ref} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)} style={{background:hov?C.cdark:C.cream,borderRadius:"16px",padding:"28px",border:hov?`2px solid ${C.orange}`:`2px solid ${C.bdr}`,opacity:vis?1:0,transform:vis?"translateY(0)":"translateY(28px)",transition:`opacity 0.6s ${delay}ms,transform 0.6s ${delay}ms,border 0.2s,background 0.2s`}}><div style={{width:"44px",height:"44px",borderRadius:"10px",background:C.cream,border:`1px solid ${C.bdr}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.3rem",marginBottom:"16px"}}>{skill.icon}</div><div style={{fontWeight:800,fontSize:"1rem",letterSpacing:"0.06em",color:C.dark,marginBottom:"6px"}}>{skill.cat}</div><div style={{fontSize:"0.78rem",color:C.gray,marginBottom:"20px",lineHeight:1.5}}>{skill.desc}</div><div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"8px"}}>{skill.items.map(item=>(<div key={item.name} style={{background:C.cream,border:`1px solid ${C.bdr}`,borderRadius:"8px",padding:"10px 6px",display:"flex",flexDirection:"column",alignItems:"center",gap:"5px"}}><span style={{fontSize:"1.3rem"}}>{item.icon}</span><span style={{fontSize:"0.6rem",fontWeight:800,letterSpacing:"0.1em",color:C.dark}}>{item.name}</span></div>))}</div></div>);
-}
-function Skills(){
-  return(<section id="skills" style={{background:C.white,padding:"100px 5%"}}><div style={{maxWidth:"1240px",margin:"0 auto"}}><SLabel label="SKILLS & TECHNOLOGIES"/><h2 style={{fontFamily:"Georgia,serif",fontSize:"clamp(2rem,4vw,3.4rem)",fontWeight:700,color:C.dark,margin:"0 0 50px",lineHeight:1.1}}>Tools I<br/><span style={{color:C.orange,fontStyle:"italic"}}>Work With</span></h2><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:"20px"}}>{DATA.skills.map((s,i)=><SkillCard key={i} skill={s} delay={i*80}/>)}</div></div></section>);
-}
+function SkillCard({ skill, delay, isMobile }) {
+  const [ref, vis] = useInView();
+  const [hov, setHov] = useState(false);
 
-// ── WORK ─────────────────────────────────────────────────────────────────────
-function ProjectCard({project,delay}){
-  const[ref,vis]=useInView();const[hov,setHov]=useState(false);
-  return(<div ref={ref} style={{borderRadius:"16px",overflow:"hidden",background:C.white,border:`1px solid ${C.bdr}`,opacity:vis?1:0,transform:vis?"none":"translateY(30px)",transition:`opacity 0.7s ${delay}ms,transform 0.7s ${delay}ms`,boxShadow:hov?"0 12px 40px rgba(0,0,0,0.12)":"none"}} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}><div style={{height:"280px",background:project.cardBg,backgroundImage:project.bgImg?`url(${project.bgImg})`:"none",backgroundSize:"cover",backgroundPosition:"center",display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
-        {project.bgImg && <div style={{position:"absolute",inset:0,background:"rgba(12,31,16,0.62)",backdropFilter:"blur(0px)"}}/>}
-        <span style={{position:"relative",zIndex:1,fontSize:"6rem",filter:`drop-shadow(0 4px 24px ${project.emojiColor}cc)`,transform:hov?"scale(1.08) translateY(-4px)":"scale(1)",transition:"transform 0.4s ease"}}>{project.emoji}</span><a href={project.live} target="_blank" rel="noopener noreferrer" style={{position:"absolute",top:"16px",right:"16px",width:"38px",height:"38px",borderRadius:"50%",background:C.orange,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",textDecoration:"none",fontSize:"1rem",fontWeight:900,transition:"all 0.2s",transform:hov?"scale(1.1)":"scale(1)"}} onMouseEnter={e=>e.currentTarget.style.background=C.ohov} onMouseLeave={e=>e.currentTarget.style.background=C.orange}>↗</a></div><div style={{padding:"24px 26px 28px"}}><div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"12px"}}><div style={{width:"8px",height:"8px",borderRadius:"50%",background:C.orange,flexShrink:0}}/><span style={{fontSize:"0.7rem",fontWeight:800,letterSpacing:"0.18em",color:C.gray,textTransform:"uppercase"}}>{project.cat}</span><a href={project.github} target="_blank" rel="noopener noreferrer" style={{marginLeft:"auto",fontSize:"0.68rem",fontWeight:800,letterSpacing:"0.1em",color:C.dark,border:`1px solid ${C.bdr}`,borderRadius:"100px",padding:"3px 10px",textDecoration:"none",transition:"all 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.background=C.orange;e.currentTarget.style.borderColor=C.orange;e.currentTarget.style.color="#fff";}} onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.borderColor=C.bdr;e.currentTarget.style.color=C.dark;}}>GitHub</a></div><h3 style={{fontFamily:"Georgia,serif",fontSize:"1.4rem",fontWeight:700,color:C.dark,margin:"0 0 10px",lineHeight:1.2}}>{project.title}</h3><p style={{fontSize:"0.87rem",color:C.gray,lineHeight:1.7,margin:"0 0 18px"}}>{project.desc}</p><div style={{display:"flex",flexWrap:"wrap",gap:"7px"}}>{project.tech.map(t=>(<span key={t} style={{fontSize:"0.72rem",fontWeight:700,color:C.dark,border:`1px solid ${C.bdr}`,borderRadius:"100px",padding:"4px 12px",background:C.cream}}>{t}</span>))}</div></div></div>);
-}
-function Work(){
-  return(<section id="work" style={{background:C.bg,padding:"100px 5%"}}><div style={{maxWidth:"1240px",margin:"0 auto"}}><SLabel label="FEATURED WORK" light/><h2 style={{fontFamily:"Georgia,serif",fontSize:"clamp(2.4rem,5vw,4rem)",fontWeight:900,color:"#fff",margin:"0 0 60px",lineHeight:1.0,letterSpacing:"-0.02em",textTransform:"uppercase"}}>SELECTED<br/>PROJECTS</h2><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(460px,1fr))",gap:"24px"}}>{DATA.projects.map((p,i)=><ProjectCard key={i} project={p} delay={i*120}/>)}</div></div></section>);
-}
-
-// ── EXPERIENCE ───────────────────────────────────────────────────────────────
-function Experience(){
-  const[ref,vis]=useInView();
-  return(<section id="experience" style={{background:C.white,padding:"100px 5%"}}><div style={{maxWidth:"1240px",margin:"0 auto"}}><SLabel label="EXPERIENCE"/><h2 style={{fontFamily:"Georgia,serif",fontSize:"clamp(2rem,4vw,3.4rem)",fontWeight:700,color:C.dark,margin:"0 0 50px",lineHeight:1.1}}>Where I've<br/><span style={{color:C.orange,fontStyle:"italic"}}>Worked</span></h2><div ref={ref} style={{display:"grid",gridTemplateColumns:"1fr 2fr",gap:"60px",opacity:vis?1:0,transform:vis?"none":"translateY(20px)",transition:"all 0.8s"}}><div><div style={{fontSize:"0.68rem",fontWeight:800,letterSpacing:"0.2em",color:C.lgray,marginBottom:"10px"}}>{DATA.experience.period}</div><h3 style={{fontFamily:"Georgia,serif",fontSize:"1.5rem",fontWeight:700,color:C.dark,margin:"0 0 6px"}}>{DATA.experience.title}</h3><a href={DATA.experience.companyUrl} style={{fontSize:"1rem",color:C.orange,fontStyle:"italic",textDecoration:"none"}}>{DATA.experience.company} ↗</a></div><div><ul style={{listStyle:"none",padding:0,margin:"0 0 24px"}}>{DATA.experience.points.map((p,i)=>(<li key={i} style={{display:"flex",gap:"12px",marginBottom:"14px",opacity:vis?1:0,transform:vis?"none":"translateX(20px)",transition:`all 0.6s ${i*80+200}ms`}}><div style={{width:"6px",height:"6px",borderRadius:"50%",background:C.orange,flexShrink:0,marginTop:"7px"}}/><span style={{fontSize:"0.9rem",color:C.gray,lineHeight:1.7}}>{p}</span></li>))}</ul><div style={{display:"flex",flexWrap:"wrap",gap:"8px"}}>{DATA.experience.tech.map(t=>(<span key={t} style={{fontSize:"0.7rem",fontWeight:700,letterSpacing:"0.1em",color:C.dark,border:`1px solid ${C.bdr}`,borderRadius:"100px",padding:"4px 12px"}}>{t}</span>))}</div></div></div></div></section>);
-}
-
-// ── ACHIEVEMENTS & CERTIFICATIONS ────────────────────────────────────────────
-function CertCard({cert, idx}){
-  const[ref,vis]=useInView();
-  const[hov,setHov]=useState(false);
-  const hasLink = cert.link && cert.link !== "#";
-  return(
-    <a ref={ref} href={hasLink ? cert.link : undefined} target={hasLink?"_blank":undefined} rel="noopener noreferrer"
+  return (
+    <div
+      ref={ref}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
       style={{
-        display:"block", textDecoration:"none", borderRadius:"16px", overflow:"hidden",
-        opacity:vis?1:0, transform:vis?"none":"translateY(28px)",
-        transition:`opacity 0.7s ${idx*110}ms, transform 0.7s ${idx*110}ms, box-shadow 0.3s`,
-        cursor:hasLink?"pointer":"default",
-        boxShadow:hov?"0 20px 60px rgba(0,0,0,0.28)":"0 4px 20px rgba(0,0,0,0.1)",
-        position:"relative",
+        background: hov ? C.cdark : C.cream,
+        borderRadius: "16px",
+        padding: isMobile ? "20px" : "28px",
+        border: hov ? `2px solid ${C.orange}` : `2px solid ${C.bdr}`,
+        opacity: vis ? 1 : 0,
+        transform: vis ? "translateY(0)" : "translateY(28px)",
+        transition: `opacity 0.6s ${delay}ms,transform 0.6s ${delay}ms,border 0.2s,background 0.2s`,
       }}
-      onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}>
+    >
+      <div
+        style={{
+          width: isMobile ? "40px" : "44px",
+          height: isMobile ? "40px" : "44px",
+          borderRadius: "10px",
+          background: C.cream,
+          border: `1px solid ${C.bdr}`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: isMobile ? "1.1rem" : "1.3rem",
+          marginBottom: "16px",
+        }}
+      >
+        {skill.icon}
+      </div>
 
-      {/* Certificate image as background */}
-      <div style={{
-        height:"200px", position:"relative", overflow:"hidden",
-        background: cert.img ? "none" : C.cdark,
-      }}>
-        {cert.img && (
-          <img src={cert.img} alt={cert.name}
+      <div
+        style={{
+          fontWeight: 800,
+          fontSize: isMobile ? "0.9rem" : "1rem",
+          letterSpacing: "0.06em",
+          color: C.dark,
+          marginBottom: "6px",
+        }}
+      >
+        {skill.cat}
+      </div>
+
+      <div
+        style={{
+          fontSize: isMobile ? "0.74rem" : "0.78rem",
+          color: C.gray,
+          marginBottom: "20px",
+          lineHeight: 1.5,
+        }}
+      >
+        {skill.desc}
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(3,1fr)",
+          gap: "8px",
+        }}
+      >
+        {skill.items.map((item) => (
+          <div
+            key={item.name}
             style={{
-              width:"100%", height:"100%", objectFit:"cover", objectPosition:"top center", display:"block",
-              transform: hov ? "scale(1.06)" : "scale(1)",
-              transition:"transform 0.5s ease",
+              background: C.cream,
+              border: `1px solid ${C.bdr}`,
+              borderRadius: "8px",
+              padding: isMobile ? "9px 6px" : "10px 6px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "5px",
             }}
-          />
-        )}
-        {/* Dark overlay */}
-        <div style={{
-          position:"absolute", inset:0,
-          background: hov
-            ? "linear-gradient(180deg, rgba(12,31,16,0.35) 0%, rgba(12,31,16,0.82) 100%)"
-            : "linear-gradient(180deg, rgba(12,31,16,0.25) 0%, rgba(12,31,16,0.75) 100%)",
-          transition:"background 0.3s",
-        }}/>
-        {/* Number badge top-left */}
-        <div style={{
-          position:"absolute", top:"14px", left:"14px",
-          fontFamily:"Georgia,serif", fontSize:"1.5rem", fontWeight:900,
-          color:"#fff", lineHeight:1,
-          textShadow:"0 2px 8px rgba(0,0,0,0.5)",
-        }}>{cert.num}</div>
-        {/* View button top-right */}
-        {hasLink && (
-          <div style={{
-            position:"absolute", top:"14px", right:"14px",
-            fontSize:"0.68rem", fontWeight:800, letterSpacing:"0.1em",
-            color:"#fff", background: hov ? C.orange : "rgba(232,76,30,0.8)",
-            borderRadius:"100px", padding:"4px 14px",
-            transition:"background 0.2s",
-          }}>VIEW ↗</div>
-        )}
-        {/* Title overlay at bottom */}
-        <div style={{
-          position:"absolute", bottom:0, left:0, right:0,
-          padding:"12px 16px 14px",
-        }}>
-          <div style={{fontSize:"0.88rem", fontWeight:700, color:"#fff", lineHeight:1.35, marginBottom:"4px"}}>{cert.name}</div>
-        </div>
-      </div>
-
-      {/* Bottom info strip */}
-      <div style={{
-        background: hov ? C.cdark : C.white,
-        borderLeft:`1px solid ${C.bdr}`, borderRight:`1px solid ${C.bdr}`, borderBottom:`1px solid ${C.bdr}`,
-        borderRadius:"0 0 16px 16px",
-        padding:"12px 16px",
-        display:"flex", justifyContent:"space-between", alignItems:"center",
-        transition:"background 0.25s",
-      }}>
-        <div style={{display:"flex",alignItems:"center",gap:"8px"}}>
-          <div style={{width:"6px",height:"6px",borderRadius:"50%",background:C.orange,flexShrink:0}}/>
-          <span style={{fontSize:"0.76rem", fontWeight:700, color:C.gray}}>{cert.org}</span>
-        </div>
-        <span style={{fontSize:"0.68rem", fontWeight:800, letterSpacing:"0.1em", color:C.orange, textTransform:"uppercase"}}>{cert.date}</span>
-      </div>
-    </a>
-  );
-}
-
-function AchieveCard({item,idx,dark}){
-  const[ref,vis]=useInView();
-  const[hov,setHov]=useState(false);
-  return(
-    <div ref={ref} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
-      style={{borderRadius:"16px",overflow:"hidden",opacity:vis?1:0,transform:vis?"none":"translateY(24px)",transition:`opacity 0.6s ${idx*90}ms,transform 0.6s ${idx*90}ms`,boxShadow:hov?"0 12px 36px rgba(0,0,0,0.15)":"none"}}>
-      <div style={{height:"6px",background:`linear-gradient(90deg,${C.orange},#f97316)`}}/>
-      <div style={{
-        background: dark ? (hov?"rgba(240,235,224,0.09)":"rgba(240,235,224,0.05)") : (hov?C.cdark:C.white),
-        border: dark ? "1px solid rgba(240,235,224,0.12)" : `1px solid ${C.bdr}`,
-        borderTop:"none",
-        borderRadius:"0 0 16px 16px",
-        padding:"22px 24px",
-        transition:"background 0.25s",
-      }}>
-        <div style={{fontSize:"2.2rem",marginBottom:"12px"}}>{item.icon}</div>
-        <div style={{fontFamily:"Georgia,serif",fontSize:"1rem",fontWeight:700,color:dark?C.cream:C.dark,marginBottom:"6px"}}>{item.title}</div>
-        <div style={{fontSize:"0.78rem",color:dark?C.lgray:C.gray,lineHeight:1.6}}>{item.desc}</div>
+          >
+            <span style={{ fontSize: isMobile ? "1.1rem" : "1.3rem" }}>{item.icon}</span>
+            <span
+              style={{
+                fontSize: isMobile ? "0.55rem" : "0.6rem",
+                fontWeight: 800,
+                letterSpacing: "0.1em",
+                color: C.dark,
+                textAlign: "center",
+              }}
+            >
+              {item.name}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-function Achievements(){
-  return(
-    <section id="achievements" style={{background:C.bg,padding:"0"}}>
-      {/* ── Top half: green bg — Achievement cards ── */}
-      <div style={{background:C.bg,padding:"100px 5% 70px"}}>
-        <div style={{maxWidth:"1240px",margin:"0 auto"}}>
-          <SLabel label="MILESTONES" light/>
-          <h2 style={{fontFamily:"Georgia,serif",fontSize:"clamp(2rem,4vw,3.4rem)",fontWeight:700,color:"#fff",margin:"0 0 48px",lineHeight:1.1}}>
-            Key<br/><span style={{color:C.orange,fontStyle:"italic"}}>Achievements</span>
-          </h2>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:"16px"}}>
-            {DATA.achievements.map((a,i)=><AchieveCard key={i} item={a} idx={i} dark/>)}
+function Skills({ isMobile }) {
+  return (
+    <section
+      id="skills"
+      style={{
+        background: C.white,
+        padding: isMobile ? "70px 20px" : "100px 5%",
+      }}
+    >
+      <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
+        <SLabel label="SKILLS & TECHNOLOGIES" />
+
+        <h2
+          style={{
+            fontFamily: "Georgia,serif",
+            fontSize: isMobile ? "2rem" : "clamp(2rem,4vw,3.4rem)",
+            fontWeight: 700,
+            color: C.dark,
+            margin: "0 0 50px",
+            lineHeight: 1.1,
+          }}
+        >
+          Tools I
+          <br />
+          <span style={{ color: C.orange, fontStyle: "italic" }}>Work With</span>
+        </h2>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(260px,1fr))",
+            gap: isMobile ? "16px" : "20px",
+          }}
+        >
+          {DATA.skills.map((s, i) => (
+            <SkillCard key={i} skill={s} delay={i * 80} isMobile={isMobile} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── WORK ─────────────────────────────────────────────────────────────────────
+function ProjectCard({ project, delay, isMobile }) {
+  const [ref, vis] = useInView();
+  const [hov, setHov] = useState(false);
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        borderRadius: "16px",
+        overflow: "hidden",
+        background: C.white,
+        border: `1px solid ${C.bdr}`,
+        opacity: vis ? 1 : 0,
+        transform: vis ? "none" : "translateY(30px)",
+        transition: `opacity 0.7s ${delay}ms,transform 0.7s ${delay}ms`,
+        boxShadow: hov ? "0 12px 40px rgba(0,0,0,0.12)" : "none",
+      }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      <div
+        style={{
+          height: isMobile ? "220px" : "280px",
+          background: project.cardBg,
+          backgroundImage: project.bgImg ? `url(${project.bgImg})` : "none",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {project.bgImg && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(12,31,16,0.62)",
+              backdropFilter: "blur(0px)",
+            }}
+          />
+        )}
+
+        <span
+          style={{
+            position: "relative",
+            zIndex: 1,
+            fontSize: isMobile ? "4.2rem" : "6rem",
+            filter: `drop-shadow(0 4px 24px ${project.emojiColor}cc)`,
+            transform: hov ? "scale(1.08) translateY(-4px)" : "scale(1)",
+            transition: "transform 0.4s ease",
+          }}
+        >
+          {project.emoji}
+        </span>
+
+        <a
+          href={project.live}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            position: "absolute",
+            top: isMobile ? "12px" : "16px",
+            right: isMobile ? "12px" : "16px",
+            width: isMobile ? "34px" : "38px",
+            height: isMobile ? "34px" : "38px",
+            borderRadius: "50%",
+            background: C.orange,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#fff",
+            textDecoration: "none",
+            fontSize: isMobile ? "0.9rem" : "1rem",
+            fontWeight: 900,
+            transition: "all 0.2s",
+            transform: hov ? "scale(1.1)" : "scale(1)",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = C.ohov)}
+          onMouseLeave={(e) => (e.currentTarget.style.background = C.orange)}
+        >
+          ↗
+        </a>
+      </div>
+
+      <div style={{ padding: isMobile ? "18px 18px 22px" : "24px 26px 28px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: isMobile ? "flex-start" : "center",
+            gap: "10px",
+            marginBottom: "12px",
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: C.orange, flexShrink: 0 }} />
+
+          <span
+            style={{
+              fontSize: isMobile ? "0.64rem" : "0.7rem",
+              fontWeight: 800,
+              letterSpacing: "0.18em",
+              color: C.gray,
+              textTransform: "uppercase",
+            }}
+          >
+            {project.cat}
+          </span>
+
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              marginLeft: isMobile ? "0" : "auto",
+              fontSize: isMobile ? "0.64rem" : "0.68rem",
+              fontWeight: 800,
+              letterSpacing: "0.1em",
+              color: C.dark,
+              border: `1px solid ${C.bdr}`,
+              borderRadius: "100px",
+              padding: isMobile ? "3px 9px" : "3px 10px",
+              textDecoration: "none",
+              transition: "all 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = C.orange;
+              e.currentTarget.style.borderColor = C.orange;
+              e.currentTarget.style.color = "#fff";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.borderColor = C.bdr;
+              e.currentTarget.style.color = C.dark;
+            }}
+          >
+            GitHub
+          </a>
+        </div>
+
+        <h3
+          style={{
+            fontFamily: "Georgia,serif",
+            fontSize: isMobile ? "1.15rem" : "1.4rem",
+            fontWeight: 700,
+            color: C.dark,
+            margin: "0 0 10px",
+            lineHeight: 1.2,
+          }}
+        >
+          {project.title}
+        </h3>
+
+        <p
+          style={{
+            fontSize: isMobile ? "0.8rem" : "0.87rem",
+            color: C.gray,
+            lineHeight: 1.7,
+            margin: "0 0 18px",
+          }}
+        >
+          {project.desc}
+        </p>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "7px" }}>
+          {project.tech.map((t) => (
+            <span
+              key={t}
+              style={{
+                fontSize: isMobile ? "0.68rem" : "0.72rem",
+                fontWeight: 700,
+                color: C.dark,
+                border: `1px solid ${C.bdr}`,
+                borderRadius: "100px",
+                padding: isMobile ? "4px 10px" : "4px 12px",
+                background: C.cream,
+              }}
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Work({ isMobile }) {
+  return (
+    <section
+      id="work"
+      style={{
+        background: C.bg,
+        padding: isMobile ? "70px 20px" : "100px 5%",
+      }}
+    >
+      <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
+        <SLabel label="FEATURED WORK" light />
+
+        <h2
+          style={{
+            fontFamily: "Georgia,serif",
+            fontSize: isMobile ? "2.1rem" : "clamp(2.4rem,5vw,4rem)",
+            fontWeight: 900,
+            color: "#fff",
+            margin: "0 0 60px",
+            lineHeight: 1.0,
+            letterSpacing: "-0.02em",
+            textTransform: "uppercase",
+          }}
+        >
+          SELECTED
+          <br />
+          PROJECTS
+        </h2>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(460px,1fr))",
+            gap: isMobile ? "18px" : "24px",
+          }}
+        >
+          {DATA.projects.map((p, i) => (
+            <ProjectCard key={i} project={p} delay={i * 120} isMobile={isMobile} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── EXPERIENCE ───────────────────────────────────────────────────────────────
+function Experience({ isMobile }) {
+  const [ref, vis] = useInView();
+
+  return (
+    <section
+      id="experience"
+      style={{
+        background: C.white,
+        padding: isMobile ? "70px 20px" : "100px 5%",
+      }}
+    >
+      <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
+        <SLabel label="EXPERIENCE" />
+
+        <h2
+          style={{
+            fontFamily: "Georgia,serif",
+            fontSize: isMobile ? "2rem" : "clamp(2rem,4vw,3.4rem)",
+            fontWeight: 700,
+            color: C.dark,
+            margin: "0 0 50px",
+            lineHeight: 1.1,
+          }}
+        >
+          Where I've
+          <br />
+          <span style={{ color: C.orange, fontStyle: "italic" }}>Worked</span>
+        </h2>
+
+        <div
+          ref={ref}
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 2fr",
+            gap: isMobile ? "30px" : "60px",
+            opacity: vis ? 1 : 0,
+            transform: vis ? "none" : "translateY(20px)",
+            transition: "all 0.8s",
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontSize: isMobile ? "0.62rem" : "0.68rem",
+                fontWeight: 800,
+                letterSpacing: "0.2em",
+                color: C.lgray,
+                marginBottom: "10px",
+              }}
+            >
+              {DATA.experience.period}
+            </div>
+
+            <h3
+              style={{
+                fontFamily: "Georgia,serif",
+                fontSize: isMobile ? "1.2rem" : "1.5rem",
+                fontWeight: 700,
+                color: C.dark,
+                margin: "0 0 6px",
+              }}
+            >
+              {DATA.experience.title}
+            </h3>
+
+            <a
+              href={DATA.experience.companyUrl}
+              style={{
+                fontSize: isMobile ? "0.9rem" : "1rem",
+                color: C.orange,
+                fontStyle: "italic",
+                textDecoration: "none",
+              }}
+            >
+              {DATA.experience.company} ↗
+            </a>
+          </div>
+
+          <div>
+            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 24px" }}>
+              {DATA.experience.points.map((p, i) => (
+                <li
+                  key={i}
+                  style={{
+                    display: "flex",
+                    gap: "12px",
+                    marginBottom: "14px",
+                    opacity: vis ? 1 : 0,
+                    transform: vis ? "none" : "translateX(20px)",
+                    transition: `all 0.6s ${i * 80 + 200}ms`,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "6px",
+                      height: "6px",
+                      borderRadius: "50%",
+                      background: C.orange,
+                      flexShrink: 0,
+                      marginTop: "7px",
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: isMobile ? "0.82rem" : "0.9rem",
+                      color: C.gray,
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    {p}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+              {DATA.experience.tech.map((t) => (
+                <span
+                  key={t}
+                  style={{
+                    fontSize: isMobile ? "0.64rem" : "0.7rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.1em",
+                    color: C.dark,
+                    border: `1px solid ${C.bdr}`,
+                    borderRadius: "100px",
+                    padding: isMobile ? "4px 10px" : "4px 12px",
+                  }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+function CertCard({ cert, idx, isMobile }) {
+  const [ref, vis] = useInView();
+  const [hov, setHov] = useState(false);
+  const hasLink = cert.link && cert.link !== "#";
+
+  return (
+    <a
+      ref={ref}
+      href={hasLink ? cert.link : undefined}
+      target={hasLink ? "_blank" : undefined}
+      rel="noopener noreferrer"
+      style={{
+        display: "block",
+        textDecoration: "none",
+        borderRadius: "16px",
+        overflow: "hidden",
+        opacity: vis ? 1 : 0,
+        transform: vis ? "none" : "translateY(28px)",
+        transition: `opacity 0.7s ${idx * 110}ms, transform 0.7s ${idx * 110}ms, box-shadow 0.3s`,
+        cursor: hasLink ? "pointer" : "default",
+        boxShadow: hov ? "0 20px 60px rgba(0,0,0,0.28)" : "0 4px 20px rgba(0,0,0,0.1)",
+        position: "relative",
+      }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      <div
+        style={{
+          height: isMobile ? "180px" : "200px",
+          position: "relative",
+          overflow: "hidden",
+          background: cert.img ? "none" : C.cdark,
+        }}
+      >
+        {cert.img && (
+          <img
+            src={cert.img}
+            alt={cert.name}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "top center",
+              display: "block",
+              transform: hov ? "scale(1.06)" : "scale(1)",
+              transition: "transform 0.5s ease",
+            }}
+          />
+        )}
+
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: hov
+              ? "linear-gradient(180deg, rgba(12,31,16,0.35) 0%, rgba(12,31,16,0.82) 100%)"
+              : "linear-gradient(180deg, rgba(12,31,16,0.25) 0%, rgba(12,31,16,0.75) 100%)",
+            transition: "background 0.3s",
+          }}
+        />
+
+        <div
+          style={{
+            position: "absolute",
+            top: isMobile ? "12px" : "14px",
+            left: isMobile ? "12px" : "14px",
+            fontFamily: "Georgia,serif",
+            fontSize: isMobile ? "1.2rem" : "1.5rem",
+            fontWeight: 900,
+            color: "#fff",
+            lineHeight: 1,
+            textShadow: "0 2px 8px rgba(0,0,0,0.5)",
+          }}
+        >
+          {cert.num}
+        </div>
+
+        {hasLink && (
+          <div
+            style={{
+              position: "absolute",
+              top: isMobile ? "12px" : "14px",
+              right: isMobile ? "12px" : "14px",
+              fontSize: isMobile ? "0.62rem" : "0.68rem",
+              fontWeight: 800,
+              letterSpacing: "0.1em",
+              color: "#fff",
+              background: hov ? C.orange : "rgba(232,76,30,0.8)",
+              borderRadius: "100px",
+              padding: isMobile ? "4px 10px" : "4px 14px",
+              transition: "background 0.2s",
+            }}
+          >
+            VIEW ↗
+          </div>
+        )}
+
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: isMobile ? "10px 12px 12px" : "12px 16px 14px",
+          }}
+        >
+          <div
+            style={{
+              fontSize: isMobile ? "0.8rem" : "0.88rem",
+              fontWeight: 700,
+              color: "#fff",
+              lineHeight: 1.35,
+              marginBottom: "4px",
+            }}
+          >
+            {cert.name}
           </div>
         </div>
       </div>
 
-      {/* ── Divider wave ── */}
-      <div style={{background:C.bg,lineHeight:0}}>
-        <svg viewBox="0 0 1440 60" style={{display:"block",width:"100%"}} preserveAspectRatio="none">
-          <path d="M0,0 C360,60 1080,60 1440,0 L1440,60 L0,60 Z" fill={C.white}/>
+      <div
+        style={{
+          background: hov ? C.cdark : C.white,
+          borderLeft: `1px solid ${C.bdr}`,
+          borderRight: `1px solid ${C.bdr}`,
+          borderBottom: `1px solid ${C.bdr}`,
+          borderRadius: "0 0 16px 16px",
+          padding: isMobile ? "12px 14px" : "12px 16px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: isMobile ? "flex-start" : "center",
+          flexDirection: isMobile ? "column" : "row",
+          gap: isMobile ? "8px" : "0",
+          transition: "background 0.25s",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: C.orange, flexShrink: 0 }} />
+          <span style={{ fontSize: isMobile ? "0.72rem" : "0.76rem", fontWeight: 700, color: C.gray }}>
+            {cert.org}
+          </span>
+        </div>
+
+        <span
+          style={{
+            fontSize: isMobile ? "0.64rem" : "0.68rem",
+            fontWeight: 800,
+            letterSpacing: "0.1em",
+            color: C.orange,
+            textTransform: "uppercase",
+          }}
+        >
+          {cert.date}
+        </span>
+      </div>
+    </a>
+  );
+}
+
+function AchieveCard({ item, idx, dark, isMobile }) {
+  const [ref, vis] = useInView();
+  const [hov, setHov] = useState(false);
+
+  return (
+    <div
+      ref={ref}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        borderRadius: "16px",
+        overflow: "hidden",
+        opacity: vis ? 1 : 0,
+        transform: vis ? "none" : "translateY(24px)",
+        transition: `opacity 0.6s ${idx * 90}ms,transform 0.6s ${idx * 90}ms`,
+        boxShadow: hov ? "0 12px 36px rgba(0,0,0,0.15)" : "none",
+      }}
+    >
+      <div style={{ height: "6px", background: `linear-gradient(90deg,${C.orange},#f97316)` }} />
+
+      <div
+        style={{
+          background: dark ? (hov ? "rgba(240,235,224,0.09)" : "rgba(240,235,224,0.05)") : (hov ? C.cdark : C.white),
+          border: dark ? "1px solid rgba(240,235,224,0.12)" : `1px solid ${C.bdr}`,
+          borderTop: "none",
+          borderRadius: "0 0 16px 16px",
+          padding: isMobile ? "18px" : "22px 24px",
+          transition: "background 0.25s",
+        }}
+      >
+        <div style={{ fontSize: isMobile ? "1.8rem" : "2.2rem", marginBottom: "12px" }}>{item.icon}</div>
+        <div
+          style={{
+            fontFamily: "Georgia,serif",
+            fontSize: isMobile ? "0.95rem" : "1rem",
+            fontWeight: 700,
+            color: dark ? C.cream : C.dark,
+            marginBottom: "6px",
+          }}
+        >
+          {item.title}
+        </div>
+        <div
+          style={{
+            fontSize: isMobile ? "0.74rem" : "0.78rem",
+            color: dark ? C.lgray : C.gray,
+            lineHeight: 1.6,
+          }}
+        >
+          {item.desc}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Achievements({ isMobile }) {
+  return (
+    <section id="achievements" style={{ background: C.bg, padding: "0" }}>
+      <div style={{ background: C.bg, padding: isMobile ? "70px 20px 50px" : "100px 5% 70px" }}>
+        <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
+          <SLabel label="MILESTONES" light />
+          <h2
+            style={{
+              fontFamily: "Georgia,serif",
+              fontSize: isMobile ? "2rem" : "clamp(2rem,4vw,3.4rem)",
+              fontWeight: 700,
+              color: "#fff",
+              margin: "0 0 48px",
+              lineHeight: 1.1,
+            }}
+          >
+            Key
+            <br />
+            <span style={{ color: C.orange, fontStyle: "italic" }}>Achievements</span>
+          </h2>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(240px,1fr))",
+              gap: "16px",
+            }}
+          >
+            {DATA.achievements.map((a, i) => (
+              <AchieveCard key={i} item={a} idx={i} dark isMobile={isMobile} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ background: C.bg, lineHeight: 0 }}>
+        <svg viewBox="0 0 1440 60" style={{ display: "block", width: "100%" }} preserveAspectRatio="none">
+          <path d="M0,0 C360,60 1080,60 1440,0 L1440,60 L0,60 Z" fill={C.white} />
         </svg>
       </div>
 
-      {/* ── Bottom half: white bg — Certificates ── */}
-      <div style={{background:C.white,padding:"60px 5% 100px"}}>
-        <div style={{maxWidth:"1240px",margin:"0 auto"}}>
-          <SLabel label="CERTIFICATIONS"/>
-          <h2 style={{fontFamily:"Georgia,serif",fontSize:"clamp(2rem,4vw,3.4rem)",fontWeight:700,color:C.dark,margin:"0 0 48px",lineHeight:1.1}}>
-            Courses &<br/><span style={{color:C.orange,fontStyle:"italic"}}>Certificates</span>
+      <div style={{ background: C.white, padding: isMobile ? "50px 20px 70px" : "60px 5% 100px" }}>
+        <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
+          <SLabel label="CERTIFICATIONS" />
+          <h2
+            style={{
+              fontFamily: "Georgia,serif",
+              fontSize: isMobile ? "2rem" : "clamp(2rem,4vw,3.4rem)",
+              fontWeight: 700,
+              color: C.dark,
+              margin: "0 0 48px",
+              lineHeight: 1.1,
+            }}
+          >
+            Courses &
+            <br />
+            <span style={{ color: C.orange, fontStyle: "italic" }}>Certificates</span>
           </h2>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:"16px"}}>
-            {DATA.certificates.map((c,i)=><CertCard key={i} cert={c} idx={i}/>)}
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(280px,1fr))",
+              gap: "16px",
+            }}
+          >
+            {DATA.certificates.map((c, i) => (
+              <CertCard key={i} cert={c} idx={i} isMobile={isMobile} />
+            ))}
           </div>
         </div>
       </div>
@@ -351,82 +1726,622 @@ function Achievements(){
 }
 
 // ── EDUCATION ────────────────────────────────────────────────────────────────
-function EduRow({edu,idx}){
-  const[ref,vis]=useInView();const[hov,setHov]=useState(false);
-  return(<div ref={ref} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)} style={{background:hov?C.cdark:C.white,border:hov?`2px solid ${C.orange}`:"2px solid transparent",borderRadius:"12px",padding:"22px 26px",display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:"12px",opacity:vis?1:0,transform:vis?"none":"translateY(16px)",transition:`opacity 0.6s ${idx*100}ms,transform 0.6s ${idx*100}ms,border 0.2s,background 0.2s`}}><div><h3 style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"1rem",color:C.dark,margin:"0 0 4px"}}>{edu.degree}</h3><div style={{fontSize:"0.73rem",fontWeight:800,letterSpacing:"0.12em",textTransform:"uppercase",color:C.orange,marginBottom:"2px"}}>{edu.institution}</div><div style={{fontSize:"0.72rem",color:C.gray}}>{edu.location}</div></div><div style={{textAlign:"right"}}><div style={{fontSize:"0.7rem",color:C.gray,marginBottom:"4px"}}>{edu.period}</div><div style={{fontFamily:"Georgia,serif",fontStyle:"italic",fontSize:"1.05rem",color:C.orange,fontWeight:700}}>{edu.grade}</div></div></div>);
-}
-function Education(){
-  return(<section id="education" style={{background:C.white,padding:"100px 5%"}}><div style={{maxWidth:"1240px",margin:"0 auto"}}><SLabel label="EDUCATION"/><h2 style={{fontFamily:"Georgia,serif",fontSize:"clamp(2rem,4vw,3.4rem)",fontWeight:700,color:C.dark,margin:"0 0 40px",lineHeight:1.1}}>Academic<br/><span style={{color:C.orange,fontStyle:"italic"}}>Background</span></h2><div style={{display:"grid",gap:"14px"}}>{DATA.education.map((e,i)=><EduRow key={i} edu={e} idx={i}/>)}</div></div></section>);
+function EduRow({ edu, idx, isMobile }) {
+  const [ref, vis] = useInView();
+  const [hov, setHov] = useState(false);
+
+  return (
+    <div
+      ref={ref}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        background: hov ? C.cdark : C.white,
+        border: hov ? `2px solid ${C.orange}` : "2px solid transparent",
+        borderRadius: "12px",
+        padding: isMobile ? "18px" : "22px 26px",
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
+        gap: "12px",
+        opacity: vis ? 1 : 0,
+        transform: vis ? "none" : "translateY(16px)",
+        transition: `opacity 0.6s ${idx * 100}ms,transform 0.6s ${idx * 100}ms,border 0.2s,background 0.2s`,
+      }}
+    >
+      <div>
+        <h3
+          style={{
+            fontFamily: "Georgia,serif",
+            fontWeight: 700,
+            fontSize: isMobile ? "0.95rem" : "1rem",
+            color: C.dark,
+            margin: "0 0 4px",
+          }}
+        >
+          {edu.degree}
+        </h3>
+
+        <div
+          style={{
+            fontSize: isMobile ? "0.7rem" : "0.73rem",
+            fontWeight: 800,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: C.orange,
+            marginBottom: "2px",
+          }}
+        >
+          {edu.institution}
+        </div>
+
+        <div
+          style={{
+            fontSize: isMobile ? "0.7rem" : "0.72rem",
+            color: C.gray,
+          }}
+        >
+          {edu.location}
+        </div>
+      </div>
+
+      <div style={{ textAlign: isMobile ? "left" : "right" }}>
+        <div
+          style={{
+            fontSize: isMobile ? "0.68rem" : "0.7rem",
+            color: C.gray,
+            marginBottom: "4px",
+          }}
+        >
+          {edu.period}
+        </div>
+
+        <div
+          style={{
+            fontFamily: "Georgia,serif",
+            fontStyle: "italic",
+            fontSize: isMobile ? "0.95rem" : "1.05rem",
+            color: C.orange,
+            fontWeight: 700,
+          }}
+        >
+          {edu.grade}
+        </div>
+      </div>
+    </div>
+  );
 }
 
-// ── CONTACT ──────────────────────────────────────────────────────────────────
-function Contact(){
-  const[ref,vis]=useInView();
-  const[form,setForm]=useState({name:"",email:"",message:""});
-  return(
-    <section id="contact" style={{background:C.bg,padding:"100px 5%"}}>
-      <div style={{maxWidth:"1240px",margin:"0 auto",display:"grid",gridTemplateColumns:"1fr 1fr",gap:"80px"}}>
-        <div ref={ref} style={{opacity:vis?1:0,transform:vis?"none":"translateY(20px)",transition:"all 0.8s"}}>
-          <div style={{fontSize:"0.7rem",fontWeight:800,letterSpacing:"0.2em",color:C.orange,textTransform:"uppercase",marginBottom:"16px"}}>GET IN TOUCH</div>
-          <h2 style={{fontFamily:"Georgia,serif",fontSize:"clamp(2.2rem,4vw,3.8rem)",fontWeight:900,color:"#fff",lineHeight:1.0,margin:"0 0 20px",textTransform:"uppercase"}}>LET'S BUILD<br/>SOMETHING<br/>REAL</h2>
-          <p style={{fontSize:"0.9rem",color:"#a0997e",lineHeight:1.7,marginBottom:"36px",maxWidth:"340px"}}>Open to full-time roles, internships, and freelance opportunities. I reply within 24 hours.</p>
-          {[{icon:"✉️",label:"EMAIL",value:DATA.contact.email,href:`mailto:${DATA.contact.email}`},{icon:"📱",label:"PHONE",value:DATA.contact.phone,href:`tel:${DATA.contact.phone}`}].map(({icon,label,value,href})=>(<a key={label} href={href} style={{display:"flex",alignItems:"center",gap:"14px",marginBottom:"14px",textDecoration:"none",padding:"13px 16px",background:"rgba(240,235,224,0.06)",borderRadius:"10px",border:"1px solid rgba(240,235,224,0.1)",transition:"all 0.2s"}} onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(232,76,30,0.4)"} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(240,235,224,0.1)"}><div style={{width:"36px",height:"36px",borderRadius:"8px",background:"rgba(232,76,30,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1rem"}}>{icon}</div><div><div style={{fontSize:"0.6rem",fontWeight:800,letterSpacing:"0.16em",color:C.lgray,marginBottom:"2px"}}>{label}</div><div style={{fontSize:"0.82rem",color:C.cream,fontWeight:600}}>{value}</div></div></a>))}
-          <div style={{display:"flex",gap:"10px",marginTop:"16px"}}>
-            {[{href:DATA.contact.github,icon:"🐙",l:"GitHub"},{href:DATA.contact.linkedin,icon:"💼",l:"LinkedIn"}].map(({href,icon,l})=>(<a key={l} href={href} target="_blank" rel="noopener noreferrer" style={{display:"flex",alignItems:"center",gap:"7px",padding:"9px 16px",background:"rgba(240,235,224,0.06)",border:"1px solid rgba(240,235,224,0.12)",borderRadius:"8px",fontSize:"0.76rem",fontWeight:700,color:C.cream,textDecoration:"none",transition:"all 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.background="rgba(232,76,30,0.15)";e.currentTarget.style.borderColor=C.orange;e.currentTarget.style.color=C.orange;}} onMouseLeave={e=>{e.currentTarget.style.background="rgba(240,235,224,0.06)";e.currentTarget.style.borderColor="rgba(240,235,224,0.12)";e.currentTarget.style.color=C.cream;}}>{icon} {l}</a>))}
-          </div>
-        </div>
-        <div style={{opacity:vis?1:0,transform:vis?"none":"translateY(20px)",transition:"all 0.8s 0.15s"}}>
-          {["YOUR NAME","EMAIL ADDRESS","MESSAGE"].map((label,i)=>(<div key={label} style={{marginBottom:"24px"}}><div style={{fontSize:"0.65rem",fontWeight:800,letterSpacing:"0.18em",color:"rgba(240,235,224,0.5)",marginBottom:"10px"}}>{label}</div>{i<2?(<input placeholder={i===0?"Enter your name":"Enter your email"} value={form[i===0?"name":"email"]} onChange={e=>setForm(f=>({...f,[i===0?"name":"email"]:e.target.value}))} style={{width:"100%",background:"transparent",border:"none",borderBottom:"1px solid rgba(240,235,224,0.2)",padding:"8px 0",fontSize:"0.9rem",color:C.cream,outline:"none",transition:"border-color 0.2s"}} onFocus={e=>e.target.style.borderBottomColor=C.orange} onBlur={e=>e.target.style.borderBottomColor="rgba(240,235,224,0.2)"}/>):(<textarea placeholder="Tell me about your project" rows={4} value={form.message} onChange={e=>setForm(f=>({...f,message:e.target.value}))} style={{width:"100%",background:"transparent",border:"none",borderBottom:"1px solid rgba(240,235,224,0.2)",padding:"8px 0",fontSize:"0.9rem",color:C.cream,outline:"none",resize:"none",fontFamily:"inherit",transition:"border-color 0.2s"}} onFocus={e=>e.target.style.borderBottomColor=C.orange} onBlur={e=>e.target.style.borderBottomColor="rgba(240,235,224,0.2)"}/>)}</div>))}
-          <button onClick={()=>{window.location.href=`mailto:${DATA.contact.email}?subject=Hello Saikumar&body=${encodeURIComponent(form.message)}`;}} style={{width:"100%",background:C.orange,border:"none",borderRadius:"8px",color:"#fff",fontWeight:800,fontSize:"0.85rem",letterSpacing:"0.14em",textTransform:"uppercase",padding:"18px",cursor:"pointer",transition:"background 0.2s",display:"flex",alignItems:"center",justifyContent:"center",gap:"8px"}} onMouseEnter={e=>e.currentTarget.style.background=C.ohov} onMouseLeave={e=>e.currentTarget.style.background=C.orange}>SEND MESSAGE →</button>
+function Education({ isMobile }) {
+  return (
+    <section
+      id="education"
+      style={{
+        background: C.white,
+        padding: isMobile ? "70px 20px" : "100px 5%",
+      }}
+    >
+      <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
+        <SLabel label="EDUCATION" />
+
+        <h2
+          style={{
+            fontFamily: "Georgia,serif",
+            fontSize: isMobile ? "2rem" : "clamp(2rem,4vw,3.4rem)",
+            fontWeight: 700,
+            color: C.dark,
+            margin: "0 0 40px",
+            lineHeight: 1.1,
+          }}
+        >
+          Academic
+          <br />
+          <span style={{ color: C.orange, fontStyle: "italic" }}>Background</span>
+        </h2>
+
+        <div style={{ display: "grid", gap: "14px" }}>
+          {DATA.education.map((e, i) => (
+            <EduRow key={i} edu={e} idx={i} isMobile={isMobile} />
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-// ── SCROLL BTNS ──────────────────────────────────────────────────────────────
-function ScrollBtns(){
-  const secs=["home","about","skills","work","experience","achievements","education","contact"];
-  const go=dir=>{const els=secs.map(id=>document.getElementById(id));const cur=els.findIndex(el=>el&&window.scrollY<el.offsetTop+el.offsetHeight-100);const next=dir==="up"?Math.max(0,cur-1):Math.min(secs.length-1,cur+1);els[Math.max(0,next)]?.scrollIntoView({behavior:"smooth"});};
-  return(<div style={{position:"fixed",bottom:"28px",right:"28px",zIndex:100,display:"flex",flexDirection:"column",gap:"8px"}}>{["up","down"].map(d=>(<button key={d} onClick={()=>go(d)} style={{width:"44px",height:"44px",borderRadius:"50%",background:C.orange,border:"none",cursor:"pointer",color:"#fff",fontSize:"1rem",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 16px rgba(232,76,30,0.4)",transition:"all 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.background=C.ohov;e.currentTarget.style.transform="scale(1.1)";}} onMouseLeave={e=>{e.currentTarget.style.background=C.orange;e.currentTarget.style.transform="scale(1)";}}>{ d==="up"?"↑":"↓"}</button>))}</div>);
-}
+function Contact({ isMobile }) {
+  const [ref, vis] = useInView();
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
 
-// ── APP ──────────────────────────────────────────────────────────────────────
-export default function App(){
-  const[active,setActive]=useState("home");
-  useEffect(()=>{
-    const h=()=>{const ids=["home","about","skills","work","experience","achievements","education","contact"];for(const id of [...ids].reverse()){const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-150){setActive(id);break;}}};
-    window.addEventListener("scroll",h);return()=>window.removeEventListener("scroll",h);
-  },[]);
-  return(
-    <div style={{fontFamily:"'Segoe UI',system-ui,sans-serif"}}>
-      <Nav active={active}/>
-      <Hero/>
-      <Marquee/>
-      <About/>
-      <Marquee/>
-      <Skills/>
-      <Marquee/>
-      <Work/>
-      <Experience/>
-      <Achievements/>
-      <Education/>
-      <Contact/>
-      <div style={{background:C.bg,borderTop:"1px solid rgba(240,235,224,0.06)",padding:"20px 5%",display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:"8px"}}>
-        <span style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"0.95rem",color:C.cream}}>Saikumar.</span>
-        <span style={{fontSize:"0.72rem",color:C.lgray,letterSpacing:"0.08em"}}>FULL-STACK DEVELOPER · 2025</span>
+  return (
+    <section
+      id="contact"
+      style={{
+        background: C.bg,
+        padding: isMobile ? "70px 20px" : "100px 5%",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1240px",
+          margin: "0 auto",
+          display: "grid",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          gap: isMobile ? "40px" : "80px",
+        }}
+      >
+        <div
+          ref={ref}
+          style={{
+            opacity: vis ? 1 : 0,
+            transform: vis ? "none" : "translateY(20px)",
+            transition: "all 0.8s",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "0.7rem",
+              fontWeight: 800,
+              letterSpacing: "0.2em",
+              color: C.orange,
+              textTransform: "uppercase",
+              marginBottom: "16px",
+            }}
+          >
+            GET IN TOUCH
+          </div>
+
+          <h2
+            style={{
+              fontFamily: "Georgia,serif",
+              fontSize: isMobile ? "2rem" : "clamp(2.2rem,4vw,3.8rem)",
+              fontWeight: 900,
+              color: "#fff",
+              lineHeight: 1.05,
+              margin: "0 0 20px",
+              textTransform: "uppercase",
+            }}
+          >
+            LET'S BUILD
+            <br />
+            SOMETHING
+            <br />
+            REAL
+          </h2>
+
+          <p
+            style={{
+              fontSize: isMobile ? "0.82rem" : "0.9rem",
+              color: "#a0997e",
+              lineHeight: 1.7,
+              marginBottom: "36px",
+              maxWidth: "340px",
+            }}
+          >
+            Open to full-time roles, internships, and freelance opportunities. I reply within 24 hours.
+          </p>
+
+          {[
+            {
+              icon: "✉️",
+              label: "EMAIL",
+              value: DATA.contact.email,
+              href: `mailto:${DATA.contact.email}`,
+            },
+            {
+              icon: "📱",
+              label: "PHONE",
+              value: DATA.contact.phone,
+              href: `tel:${DATA.contact.phone}`,
+            },
+          ].map(({ icon, label, value, href }) => (
+            <a
+              key={label}
+              href={href}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "14px",
+                marginBottom: "14px",
+                textDecoration: "none",
+                padding: isMobile ? "12px 14px" : "13px 16px",
+                background: "rgba(240,235,224,0.06)",
+                borderRadius: "10px",
+                border: "1px solid rgba(240,235,224,0.1)",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(232,76,30,0.4)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(240,235,224,0.1)")}
+            >
+              <div
+                style={{
+                  width: isMobile ? "34px" : "36px",
+                  height: isMobile ? "34px" : "36px",
+                  borderRadius: "8px",
+                  background: "rgba(232,76,30,0.15)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: isMobile ? "0.9rem" : "1rem",
+                }}
+              >
+                {icon}
+              </div>
+
+              <div>
+                <div
+                  style={{
+                    fontSize: "0.6rem",
+                    fontWeight: 800,
+                    letterSpacing: "0.16em",
+                    color: C.lgray,
+                    marginBottom: "2px",
+                  }}
+                >
+                  {label}
+                </div>
+                <div
+                  style={{
+                    fontSize: isMobile ? "0.78rem" : "0.82rem",
+                    color: C.cream,
+                    fontWeight: 600,
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {value}
+                </div>
+              </div>
+            </a>
+          ))}
+
+          <div style={{ display: "flex", gap: "10px", marginTop: "16px", flexWrap: "wrap" }}>
+            {[
+              { href: DATA.contact.github, icon: "🐙", l: "GitHub" },
+              { href: DATA.contact.linkedin, icon: "💼", l: "LinkedIn" },
+            ].map(({ href, icon, l }) => (
+              <a
+                key={l}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "7px",
+                  padding: isMobile ? "8px 14px" : "9px 16px",
+                  background: "rgba(240,235,224,0.06)",
+                  border: "1px solid rgba(240,235,224,0.12)",
+                  borderRadius: "8px",
+                  fontSize: isMobile ? "0.72rem" : "0.76rem",
+                  fontWeight: 700,
+                  color: C.cream,
+                  textDecoration: "none",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(232,76,30,0.15)";
+                  e.currentTarget.style.borderColor = C.orange;
+                  e.currentTarget.style.color = C.orange;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(240,235,224,0.06)";
+                  e.currentTarget.style.borderColor = "rgba(240,235,224,0.12)";
+                  e.currentTarget.style.color = C.cream;
+                }}
+              >
+                {icon} {l}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div
+          style={{
+            opacity: vis ? 1 : 0,
+            transform: vis ? "none" : "translateY(20px)",
+            transition: "all 0.8s 0.15s",
+          }}
+        >
+          {["YOUR NAME", "EMAIL ADDRESS", "MESSAGE"].map((label, i) => (
+            <div key={label} style={{ marginBottom: "24px" }}>
+              <div
+                style={{
+                  fontSize: "0.65rem",
+                  fontWeight: 800,
+                  letterSpacing: "0.18em",
+                  color: "rgba(240,235,224,0.5)",
+                  marginBottom: "10px",
+                }}
+              >
+                {label}
+              </div>
+
+              {i < 2 ? (
+                <input
+                  placeholder={i === 0 ? "Enter your name" : "Enter your email"}
+                  value={form[i === 0 ? "name" : "email"]}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      [i === 0 ? "name" : "email"]: e.target.value,
+                    }))
+                  }
+                  style={{
+                    width: "100%",
+                    background: "transparent",
+                    border: "none",
+                    borderBottom: "1px solid rgba(240,235,224,0.2)",
+                    padding: "8px 0",
+                    fontSize: isMobile ? "0.85rem" : "0.9rem",
+                    color: C.cream,
+                    outline: "none",
+                    transition: "border-color 0.2s",
+                  }}
+                  onFocus={(e) => (e.target.style.borderBottomColor = C.orange)}
+                  onBlur={(e) => (e.target.style.borderBottomColor = "rgba(240,235,224,0.2)")}
+                />
+              ) : (
+                <textarea
+                  placeholder="Tell me about your project"
+                  rows={isMobile ? 5 : 4}
+                  value={form.message}
+                  onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+                  style={{
+                    width: "100%",
+                    background: "transparent",
+                    border: "none",
+                    borderBottom: "1px solid rgba(240,235,224,0.2)",
+                    padding: "8px 0",
+                    fontSize: isMobile ? "0.85rem" : "0.9rem",
+                    color: C.cream,
+                    outline: "none",
+                    resize: "none",
+                    fontFamily: "inherit",
+                    transition: "border-color 0.2s",
+                  }}
+                  onFocus={(e) => (e.target.style.borderBottomColor = C.orange)}
+                  onBlur={(e) => (e.target.style.borderBottomColor = "rgba(240,235,224,0.2)")}
+                />
+              )}
+            </div>
+          ))}
+
+          <button
+            onClick={() => {
+              window.location.href = `mailto:${DATA.contact.email}?subject=Hello Saikumar&body=${encodeURIComponent(form.message)}`;
+            }}
+            style={{
+              width: "100%",
+              background: C.orange,
+              border: "none",
+              borderRadius: "8px",
+              color: "#fff",
+              fontWeight: 800,
+              fontSize: isMobile ? "0.78rem" : "0.85rem",
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              padding: isMobile ? "16px" : "18px",
+              cursor: "pointer",
+              transition: "background 0.2s",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = C.ohov)}
+            onMouseLeave={(e) => (e.currentTarget.style.background = C.orange)}
+          >
+            SEND MESSAGE →
+          </button>
+        </div>
       </div>
-      <ScrollBtns/>
-      <style>{`
-        @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-        *{box-sizing:border-box;margin:0;padding:0}
-        html{scroll-behavior:smooth}
-        ::-webkit-scrollbar{width:5px}
-        ::-webkit-scrollbar-track{background:#0c1f10}
-        ::-webkit-scrollbar-thumb{background:#e84c1e;border-radius:3px}
-        input::placeholder,textarea::placeholder{color:rgba(160,153,126,0.4);}
-      `}</style>
+    </section>
+  );
+}
+// ── SCROLL BTNS ──────────────────────────────────────────────────────────────
+function ScrollBtns({ isMobile }) {
+  const secs = ["home", "about", "skills", "work", "experience", "achievements", "education", "contact"];
+
+  const go = (dir) => {
+    const els = secs.map((id) => document.getElementById(id));
+    const cur = els.findIndex(
+      (el) => el && window.scrollY < el.offsetTop + el.offsetHeight - 100
+    );
+    const next =
+      dir === "up"
+        ? Math.max(0, cur - 1)
+        : Math.min(secs.length - 1, cur + 1);
+
+    els[Math.max(0, next)]?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        bottom: isMobile ? "18px" : "28px",
+        right: isMobile ? "16px" : "28px",
+        zIndex: 100,
+        display: "flex",
+        flexDirection: "column",
+        gap: "8px",
+      }}
+    >
+      {["up", "down"].map((d) => (
+        <button
+          key={d}
+          onClick={() => go(d)}
+          style={{
+            width: isMobile ? "40px" : "44px",
+            height: isMobile ? "40px" : "44px",
+            borderRadius: "50%",
+            background: C.orange,
+            border: "none",
+            cursor: "pointer",
+            color: "#fff",
+            fontSize: isMobile ? "0.9rem" : "1rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 4px 16px rgba(232,76,30,0.4)",
+            transition: "all 0.2s",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = C.ohov;
+            e.currentTarget.style.transform = "scale(1.1)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = C.orange;
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+        >
+          {d === "up" ? "↑" : "↓"}
+        </button>
+      ))}
     </div>
   );
 }
 
+// ── APP ──────────────────────────────────────────────────────────────────────
+export default function App() {
+  const [active, setActive] = useState("home");
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const h = () => {
+      const ids = ["home", "about", "skills", "work", "experience", "achievements", "education", "contact"];
+      for (const id of [...ids].reverse()) {
+        const el = document.getElementById(id);
+        if (el && window.scrollY >= el.offsetTop - 150) {
+          setActive(id);
+          break;
+        }
+      }
+    };
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("scroll", h);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("scroll", h);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return (
+    <div
+      style={{
+        fontFamily: "'Segoe UI',system-ui,sans-serif",
+        overflowX: "hidden",
+      }}
+    >
+      <Nav active={active} isMobile={isMobile} />
+      <Hero isMobile={isMobile} />
+      <Marquee isMobile={isMobile} />
+      <About isMobile={isMobile} />
+      <Marquee isMobile={isMobile} />
+      <Skills isMobile={isMobile} />
+      <Marquee isMobile={isMobile} />
+      <Work isMobile={isMobile} />
+      <Experience isMobile={isMobile} />
+      <Achievements isMobile={isMobile} />
+      <Education isMobile={isMobile} />
+      <Contact isMobile={isMobile} />
+
+      <div
+        style={{
+          background: C.bg,
+          borderTop: "1px solid rgba(240,235,224,0.06)",
+          padding: isMobile ? "16px 20px" : "20px 5%",
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "8px",
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "Georgia,serif",
+            fontWeight: 700,
+            fontSize: isMobile ? "0.88rem" : "0.95rem",
+            color: C.cream,
+          }}
+        >
+          Saikumar.
+        </span>
+
+        <span
+          style={{
+            fontSize: isMobile ? "0.66rem" : "0.72rem",
+            color: C.lgray,
+            letterSpacing: "0.08em",
+          }}
+        >
+          FULL-STACK DEVELOPER · 2025
+        </span>
+      </div>
+
+      <ScrollBtns isMobile={isMobile} />
+
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0) }
+          100% { transform: translateX(-50%) }
+        }
+
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+
+        html {
+          scroll-behavior: smooth;
+        }
+
+        body {
+          overflow-x: hidden;
+        }
+
+        img {
+          max-width: 100%;
+          height: auto;
+          display: block;
+        }
+
+        ::-webkit-scrollbar {
+          width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: #0c1f10;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background: #e84c1e;
+          border-radius: 3px;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+          color: rgba(160,153,126,0.4);
+        }
+
+        @media (max-width: 768px) {
+          html, body {
+            overflow-x: hidden;
+          }
+
+          section {
+            overflow-x: hidden;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
